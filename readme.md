@@ -16,13 +16,19 @@
     'matrons/<int:pk>'   'necklace-detail'
 
 # Install Django
-* Make a directory for your project and use cd to move into that directory.
-* Run 
-'pipenv install django.
-* Run 
-'pipenv shell 
+- [ ] Make a directory for your project and use cd to move into that directory.
+- [ ] Run 
+'pipenv install django'
+- [ ] Run 
+'pipenv shell' 
 to enter the virtual environment where you now have Django installed.
-* To start your Django project, run django-admin startproject <project_name> . where <project_name> is replaced with your project name. Note the period after the project name. If you don't put that, another directory will be created, which you don't want.
+- [ ] To start your Django project, run 
+'django-admin startproject <project_name> . 
+where <project_name> is replaced with your project name. Note the period after the project name. If you don't put that, another directory will be created, which you don't want.
+
+
+# Create the base template
+The templates in django-registration-redux assume you have a base.html template in your project’s template directory. This base template should include a title, meta, and content block. The title block should allow customization of the <title> tag. The meta block should appear within the <head> tag to allow for custom <meta tags for security reasons. The content block should be within the <body> tag.
 
 # Now let's study some redux pre-requesites.
 https://django-registration-redux.readthedocs.io/en/latest/index.html
