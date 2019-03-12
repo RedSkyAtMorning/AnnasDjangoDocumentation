@@ -18,12 +18,12 @@
 # Install Django
 - [ ] Make a directory for your project and use cd to move into that directory.
 - [ ] Run 
-'pipenv install django'
+    'pipenv install django'
 - [ ] Run 
-'pipenv shell' 
+    'pipenv shell' 
 to enter the virtual environment where you now have Django installed.
 - [ ] To start your Django project, run 
-'django-admin startproject <project_name> . 
+    'django-admin startproject <project_name> . 
 where <project_name> is replaced with your project name. Note the period after the project name. If you don't put that, another directory will be created, which you don't want.
 
 
