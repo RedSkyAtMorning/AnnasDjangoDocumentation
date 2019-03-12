@@ -18,6 +18,7 @@
 # Install Django
 - [ ] Make a directory for your project and use cd to move into that directory.
 - [ ] Run 
+'
     'pipenv install django'
 - [ ] Run 
     'pipenv shell' 
