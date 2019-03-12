@@ -1,9 +1,9 @@
 #High-Level Concepts
-*Matron
-*Bowl
-*Necklace
-*Bead
-*Beat
+* Matron
+* Bowl
+* Necklace
+* Bead
+* Beat
 
 #Convert all concepts into a url-to-template.html map
 
