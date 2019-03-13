@@ -204,12 +204,59 @@ Or do we need data first?
 **Changes the dashes in my HTML templates into underscores? WAIT WHY DO I HAVE TO PUT UNDERSCORES IN ALL MY FILES? Will this have repercussions???
 Yes, I had to do that, but no BREAKS so far
 
+# It's time to add a super user.
+```
+python3 manage.py createsuperuser
+```
+add the essential information to your essential table
+Superuser - SuperuserPassword - SuperUserEmail
+|-----|-----|-----|
+| .    | .    | .    |
+
+
+
 
 # Create the base template
 The templates in django-registration-redux assume you have a base.html template in your project’s template directory. This base template should include a title, meta, and content block. The title block should allow customization of the <title> tag. The meta block should appear within the <head> tag to allow for custom <meta tags for security reasons. The content block should be within the <body> tag.
 
 # Now let's study some redux pre-requesites.
 https://django-registration-redux.readthedocs.io/en/latest/index.html
+
+To meet those requirements, put the following in the base.html:
+```
+<p>This is the base template</p>
+
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Outer Title Hidden
+      {% block title %}This is for the block labeled title{% endblock %}
+  </title>
+{% block meta %}This is for the block labeled meta{% endblock %}
+</head>
+<br>
+
+<body>Start of body
+<br>
+{% block menu %}Block labled menu
+        <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="{% url 'bead-list' %}">Beads</a></li>
+          <li><a href="{% url 'matron-list' %}">Matrons</a></li>
+          <li><a href="{% url 'necklace-list' %}">Necklaces</a></li>
+          <li><a href="{% url 'bowl-list' %}">Bowls</a></li>
+        </ul>
+End Menu{% endblock %}
+<br>
+
+{% block content %}This is for the block labeled content{% endblock %}
+</body>
+
+``
+
 
 - [ ]
 'pipenv install django-registration-redux
