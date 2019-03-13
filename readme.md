@@ -69,7 +69,19 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 - [ ] In the templates directory above, touch a base.htm. and a index.html
 - [ ] For all these html files, put a hard string at the top to label it.
 
-
+```
+urlpatterns = [
+    path('', TemplateView.as_view(template_name = 'index.html'), ),
+    path('beads/', TemplateView.as_view(template_name='core/bead-list.html'), ),
+    path('beads/<int:pk>', TemplateView.as_view(template_name='core/bead-detail.html'), ),
+    path('matrons/', TemplateView.as_view(template_name='core/matron-list.html'), ),
+    path('matrons/<int:pk>', TemplateView.as_view(template_name='core/matron-detail.html'), ),
+    path('necklaces/', TemplateView.as_view(template_name='core/necklace-list.html'), ),
+    path('necklaces/<int:pk>/', TemplateView.as_view(template_name='core/necklaces-detail.html'), ),
+    path('bowls/', TemplateView.as_view(template_name='core/bowl-list.html'), ),
+    path('bowls/<int:pk>/', TemplateView.as_view(template_name='core/bowl-detail,html'), ),
+]
+```
 ```
 ## This is catalog.urls
 
@@ -91,6 +103,106 @@ urlpatterns = [
     path('bowls/<int:pk>/', TemplateView.as_view(), name='bowls-detail'),
 ]
 ```
+- [ ] makemigrations
+- [ ] migrate
+- [ ] runserver
+- [ ] 127.0.0.1:8000/core 
+- [ ] and test all the simple sub-pages
+
+# Now let's create the base template. Uh, can't. So, let's do simple models and simple views.
+
+
+Header
+```
+from django.db import models
+from django.contrib.auth.models import User
+from django.urls import reverse
+from datetime import date
+import uuid
+
+```
+- [ ] Do this over and over for each core concept. A primary key <int:pk> is implied.
+
+
+```
+# Create your models here.
+class Bead(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name',]
+
+    def get_absolute_url(self):
+        return reverse('bead-detail', args=[str(self.pk)])
+        #That first argument is supposed to be the URL, not the view
+
+    def __str__(self):
+        return self.name
+```
+- [ ] Go ahead an make migrations
+
+# Do the Views file
+Header
+'''
+from django.shortcuts import render
+from core.models import Bead, Matron, Necklace, Bowl
+from django.views import generic
+from django.views.generic.edit import CreateView
+'''
+Index
+```
+def index(request):
+    request.session['num_visits'] = num_visits+1
+
+    return render(
+        request,
+        'index.html',
+        context={'num_visits': num_visits},
+    )
+```
+For each core concept
+
+```
+class BeadListView(generic.ListView):
+    model = Bead
+    
+class BeadDetailView(generic.ListView):
+    model = Bead
+    
+```
+
+```
+urlpatterns = [
+    path('', views.index, name = 'index'),
+    path('beads/', views.BeadListView.as_view(), name='bead-list'),
+    path('beads/<int:pk>', views.BeadDetailView.as_view(), name='bead-detail'),
+    path('matrons/', views.MatronListView.as_view(), name='matron-list'),
+    path('matrons/<int:pk>', views.MatronDetailView.as_view(), name='matron-detail'),
+    path('necklaces/', views.NecklaceListView.as_view(), name='necklace-list'),
+    path('necklaces/<int:pk>/', views.NecklaceDetailView.as_view(), name='necklace-detail'),
+    path('bowls/', views.BowlListView.as_view(), name='bowl-list'),
+    path('bowls/<int:pk>/', views.BowlDetailView.as_view(), name='bowl-detail'),
+]
+```
+- [ ] making migrations, migrate, is a great way to check for errors
+
+Can we test this? 
+Or do we need data first?
+'''
+<p>This is the base template</p>
+
+{% block menu %}
+        <ul>
+          <li><a href="{% url 'index' %}">Home</a></li>
+          <li><a href="{% url 'bead-list' %}">Beads</a></li>
+          <li><a href="{% url 'matron-list' %}">Matrons</a></li>
+          <li><a href="{% url 'necklace-list' %}">Necklaces</a></li>
+          <li><a href="{% url 'bowl-list' %}">Bowls</a></li>
+        </ul>
+{% endblock %}
+'''
+**Changes the dashes in my HTML templates into underscores? WAIT WHY DO I HAVE TO PUT UNDERSCORES IN ALL MY FILES? Will this have repercussions???
+Yes, I had to do that, but no BREAKS so far
 
 
 # Create the base template
