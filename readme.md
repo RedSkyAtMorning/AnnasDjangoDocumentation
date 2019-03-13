@@ -42,7 +42,7 @@ where core is <app>
     TIME_ZONE = 'America/New_York'
 - [ ] In configuration URL.py, paste the following
 
-'''
+```
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
@@ -57,7 +57,7 @@ urlpatterns = [
     ]   
    
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-'''
+```
 
 - [ ] it's already time to migrate
 'python3 manage.py makemigrations
@@ -69,8 +69,8 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 - [ ] In the templates directory above, touch a base.htm. and a index.html
 - [ ] For all these html files, put a hard string at the top to label it.
 
-'''
 
+```
 ## This is catalog.urls
 
 from django.contrib import admin
@@ -90,7 +90,7 @@ urlpatterns = [
     path('bowls/', TemplateView.as_view(), name='bowls-list'),
     path('bowls/<int:pk>/', TemplateView.as_view(), name='bowls-detail'),
 ]
-'''
+```
 
 
 # Create the base template
