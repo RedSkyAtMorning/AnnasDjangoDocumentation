@@ -1,9 +1,10 @@
 #High-Level Concepts
-* Matron
-* Bowl
-* Necklace
-* Bead
-* Beat
+* Matron - members
+* Bowl - collections of components
+* Necklace - a decision
+* Bead - suggested componensts
+* Beat - events
+* - financial transactions
 
 #Convert all concepts into a url-to-template.html map
 
@@ -26,6 +27,70 @@ to enter the virtual environment where you now have Django installed.
 - [ ] To start your Django project, run 
     'django-admin startproject <project_name> . 
 where <project_name> is replaced with your project name. Note the period after the project name. If you don't put that, another directory will be created, which you don't want.
+to enter the virtual environment where you now have Django installed.
+- [ ] Move a gitignore.io file into the project https://gitignore.io
+
+# For any app
+- [ ] 'python3 manage.py startapp core'
+where core is <app>
+- [ ] within <app>, create urls.py
+    
+# Back to project
+- [ ] In settings.py
+    INSTALLED_APPS = 'Core.apps.CoreConfig', 
+   
+    TIME_ZONE = 'America/New_York'
+- [ ] In configuration URL.py, paste the following
+
+'''
+from django.contrib import admin
+from django.urls import path
+from django.urls import include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import RedirectView
+
+urlpatterns = [
+    path('', RedirectView.as_view(url='/core/', permanent=True)),
+    path('blog/', include('core.urls')),
+    path('admin/', admin.site.urls),
+    ]   
+   
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+'''
+
+- [ ] it's already time to migrate
+'python3 manage.py makemigrations
+'python3 manage.py migrate
+
+# There will be errors with URLS, so let's work on that next.
+- [ ] In your <app>, make a subdir <templates> and a subdir for it <app>
+- [ ] Make the -list and -detail ..html files for all your key concepts in the <app> under the lowest <app> dir just made
+- [ ] In the templates directory above, touch a base.htm. and a index.html
+- [ ] For all these html files, put a hard string at the top to label it.
+
+'''
+
+## This is catalog.urls
+
+from django.contrib import admin
+from django.urls import path
+from django.views.generic import TemplateView
+
+from . import views
+
+urlpatterns = [
+    path('', TemplateView.as_view(), name = 'index'),
+    path('beads/', TemplateView.as_view(), name='beads-list'),
+    path('beads/<int:pk>', TemplateView.as_view(), name='beads-detail'),
+    path('matrons/', TemplateView.as_view(), name='matrons-list'),
+    path('matrons/<int:pk>', TemplateView.as_view(), name='matrons-detail'),
+    path('necklaces/', TemplateView.as_view(), name='necklaces-list'),
+    path('necklaces/<int:pk>/', TemplateView.as_view(), name='necklaces-detail'),
+    path('bowls/', TemplateView.as_view(), name='bowls-list'),
+    path('bowls/<int:pk>/', TemplateView.as_view(), name='bowls-detail'),
+]
+'''
 
 
 # Create the base template
