@@ -77,9 +77,9 @@ urlpatterns = [
     path('matrons/', TemplateView.as_view(template_name='core/matron-list.html'), ),
     path('matrons/<int:pk>', TemplateView.as_view(template_name='core/matron-detail.html'), ),
     path('necklaces/', TemplateView.as_view(template_name='core/necklace-list.html'), ),
-    path('necklaces/<int:pk>/', TemplateView.as_view(template_name='core/necklaces-detail.html'), ),
+    path('necklaces/<int:pk>', TemplateView.as_view(template_name='core/necklaces-detail.html'), ),
     path('bowls/', TemplateView.as_view(template_name='core/bowl-list.html'), ),
-    path('bowls/<int:pk>/', TemplateView.as_view(template_name='core/bowl-detail,html'), ),
+    path('bowls/<int:pk>', TemplateView.as_view(template_name='core/bowl-detail,html'), ),
 ]
 ```
 ```
@@ -148,6 +148,7 @@ from django.shortcuts import render
 from core.models import Bead, Matron, Necklace, Bowl
 from django.views import generic
 from django.views.generic.edit import CreateView
+from django.views.generic import ListView, DetailView
 '''
 Index
 ```
@@ -166,7 +167,7 @@ For each core concept
 class BeadListView(generic.ListView):
     model = Bead
     
-class BeadDetailView(generic.ListView):
+class BeadDetailView(generic.DetailView):
     model = Bead
     
 ```
@@ -179,9 +180,9 @@ urlpatterns = [
     path('matrons/', views.MatronListView.as_view(), name='matron-list'),
     path('matrons/<int:pk>', views.MatronDetailView.as_view(), name='matron-detail'),
     path('necklaces/', views.NecklaceListView.as_view(), name='necklace-list'),
-    path('necklaces/<int:pk>/', views.NecklaceDetailView.as_view(), name='necklace-detail'),
+    path('necklaces/<int:pk>', views.NecklaceDetailView.as_view(), name='necklace-detail'),
     path('bowls/', views.BowlListView.as_view(), name='bowl-list'),
-    path('bowls/<int:pk>/', views.BowlDetailView.as_view(), name='bowl-detail'),
+    path('bowls/<int:pk>', views.BowlDetailView.as_view(), name='bowl-detail'),
 ]
 ```
 - [ ] making migrations, migrate, is a great way to check for errors
@@ -209,14 +210,83 @@ Yes, I had to do that, but no BREAKS so far
 python3 manage.py createsuperuser
 ```
 add the essential information to your essential table
-Superuser - SuperuserPassword - SuperUserEmail
+|Superuser | SuperuserPassword | SuperUserEmail|
 |-----|-----|-----|
 | .    | .    | .    |
 
+# WAIT A MINUTE, WHY DID NOT MY MODELS MIGRATE TO THE ADMIN SITE?
+Because I did not register them in admin.py
+
+```
+from django.contrib import admin
+from core.models import Bowl, Necklace, Bead, Matron
 
 
+# Pattern 1
+admin.site.register(Bowl)
+admin.site.register(Bead)
+admin.site.register(Necklace)
+admin.site.register(Matron)
+```
+# Now, add some scant data using the admin interface:
+Beads, Necklace, and Bowls. Just a few for each. 
+Not Matrons, because they are going to rest on users.
 
-# Create the base template
+# Now, we want to learn the trick of getting a list to show up on a page.
+
+So, you add this code to all the list_templates. Funny how that content block has to be called content block. 
+
+```
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Necklace List</h1>
+  {% if necklace_list %}
+  <ul>
+    {% for necklace in necklace_list %}
+      <li>
+         {{necklace.name}}
+      </li>
+      
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are none in this project.</p>
+  {% endif %}       
+{% endblock %}
+
+```
+
+# Now let's do the trick of getting detail pages to show up. 
+
+- [ ] first we will add a description line to each class. 
+'''description = models.TextField(max_length=1000,null=True, blank=True)'''
+- [ ] make migrations, migrate
+- [ ] use the admin panel to add in a few descriptions
+- [ ] this is the code that we paste inton all the detail.html pages
+```
+{% extends "base.html" %}
+
+{% block content%}
+
+    <h1>Title: {{ Bead.name }}</h1>
+
+    <p><strong>Description:</strong><br>
+        {{ Bead.description }}</p>
+
+{% endblock %}
+```
+# But the list pages aren't linking to them, so something needs to change.
+- [ ] so we add or expand this code for the innermost loop on the list pages:
+```
+<a href="{{ bead.get_absolute_url }}">{{ bead.name }}</a><br>
+```
+# Here are the important fixes that I did:
+- [ ] Note: i changed my URLS in in url file, my html files, my base template - everywhere there was a dash, I changed to underscore. And probably the reverse URL in the model.
+- [ ] just made urls with <int:pk> singular.
+- [ ] No / after <int:pk> on urls.py
+
+create the base template
 The templates in django-registration-redux assume you have a base.html template in your project’s template directory. This base template should include a title, meta, and content block. The title block should allow customization of the <title> tag. The meta block should appear within the <head> tag to allow for custom <meta tags for security reasons. The content block should be within the <body> tag.
 
 # Now let's study some redux pre-requesites.
@@ -244,10 +314,10 @@ To meet those requirements, put the following in the base.html:
 {% block menu %}Block labled menu
         <ul>
           <li><a href="{% url 'index' %}">Home</a></li>
-          <li><a href="{% url 'bead-list' %}">Beads</a></li>
-          <li><a href="{% url 'matron-list' %}">Matrons</a></li>
-          <li><a href="{% url 'necklace-list' %}">Necklaces</a></li>
-          <li><a href="{% url 'bowl-list' %}">Bowls</a></li>
+          <li><a href="{% url 'bead_list' %}">Beads</a></li>
+          <li><a href="{% url 'matron_list' %}">Matrons</a></li>
+          <li><a href="{% url 'necklace_list' %}">Necklaces</a></li>
+          <li><a href="{% url 'bowl_list' %}">Bowls</a></li>
         </ul>
 End Menu{% endblock %}
 <br>
@@ -255,18 +325,63 @@ End Menu{% endblock %}
 {% block content %}This is for the block labeled content{% endblock %}
 </body>
 
-``
+```
+
+# That got a little out of order.
+Let's step back and look at some of this Django template language.
+https://docs.djangoproject.com/en/2.1/ref/templates/language/
+
+# We just did a push, so let's try the registration stuff.
+
 
 
 - [ ]
 'pipenv install django-registration-redux
-- [ ]
-'python setup.py install
-- [ ] Begin by adding 
+
+- [ ] Begin by adding AT THE TOP OF THE LIST
 'registration 
 to the INSTALLED_APPS setting of your project, 
 - [ ] and specifying one additional setting:
 'ACCOUNT_ACTIVATION_DAYS = 7
 'REGISTRATION_DEFAULT_FROM_EMAIL = "This string is from settings.py REGISTRATION_DEFAULT_FROM_EMAIL"
-- [ ] Open project-level URLConf (urls.py) and add
-ulr += path(r'^accounts/', include('registration.backends.default.urls')),
+- [ ] Open project-level URLConf (urls.py) and NEAR THE BEGINNING
+```urlpatterns += path('accounts/', include('registration.backends.default.urls')),```
+Now that we've done that, let's go check it out in admin, where we learn that registration files have a user and a key.
+
+now try the site with /accounts/login/
+...
+
+# stuck
+
+eventually, I worked with settings.py and made a number of changes. The problem, though, is that I don't have a separate email server. Many settings are commented about. I am not able in registew new users. At least I can log in and log out of admin. I think the last step in all of this is to reset the admin password.
+
+AJ taught me to look for a confirmation link in my server terminal window.
+Also, I needed to add something to the top of my views.py file:
+```
+from django.shortcuts import render, get_object_or_404, redirect
+```
+Probably the redirect was the winner.
+
+Notes ONLY NOTES not implemented
+```
+EMAIL_BACKEND= "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST= "smtp.gmail.com"
+EMAIL_HOST_USER= "abc@gmail.com"
+EMAIL_HOST_PASSWORD= "password"
+EMAIL_PORT= 587
+EMAIL_USE_TLS= True
+DEFAULT_FROM_EMAIL= "abc@gmail.com"
+```
+
+# So let's read up on leveraging Users
+https://docs.djangoproject.com/en/2.1/topics/auth/default/#user-objects
+
+add this to Matron in models.py
+```userid = models.OneToOneField(User, on_delete=models.PROTECT, default=1)```
+
+
+Model field reference:
+https://django.readthedocs.io/en/2.1.x/ref/models/fields.html
+
+
+
