@@ -383,5 +383,42 @@ add this to Matron in models.py
 Model field reference:
 https://django.readthedocs.io/en/2.1.x/ref/models/fields.html
 
+PSQL NOTES
 
+
+
+Change stuff in Settings > Databases
+
+
+
+(w6-apile-team-channa) bash-3.2$ createuser -d apile
+(w6-apile-team-channa) bash-3.2$ createdb -U apile apile
+(w6-apile-team-channa) bash-3.2$ psql
+psql: FATAL:  database "jayspain" does not exist
+(w6-apile-team-channa) bash-3.2$ psql apile
+psql (11.2)
+Type "help" for help.
+
+apile=# \l
+                                  List of databases
+   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
+-----------+----------+----------+-------------+-------------+-----------------------
+ apile     | apile    | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ postgres  | jayspain | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
+ template0 | jayspain | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/jayspain          +
+           |          |          |             |             | jayspain=CTc/jayspain
+ template1 | jayspain | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/jayspain          +
+           |          |          |             |             | jayspain=CTc/jayspain
+(4 rows)
+
+apile=# t
+apile-# \q
+(w6-apile-team-channa) bash-3.2$ ls
+Pipfile		README.md	core		noun-stack.png
+Pipfile.lock	apile		manage.py	teamthoughts.md
+(w6-apile-team-channa) bash-3.2$ cd apile
+(w6-apile-team-channa) bash-3.2$ ls
+__init__.py	settings.py	urls.py		wsgi.py
+(w6-apile-team-channa) bash-3.2$ open settings.py
+(w6-apile-team-channa) bash-3.2$
 
